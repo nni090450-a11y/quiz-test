@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bacterio Virology Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 30px;
+    }
+
+    .note {
+      background: #fff8db;
+      border: 1px solid #f0d66a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      font-weight: bold;
+    }
+
+    .pill {
+      background: #eef3ff;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    #question {
+      font-size: 22px;
+      line-height: 1.4;
+      margin: 16px 0 12px 0;
+    }
+
+    .option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin: 10px 0;
+      padding: 14px 16px;
+      font-size: 17px;
+      border: 1px solid #cfd8e3;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      background: #f5f8ff;
+    }
+
+    .correct {
+      background: #dff6e5 !important;
+      border-color: #2f9e44 !important;
+    }
+
+    .wrong {
+      background: #fde2e1 !important;
+      border-color: #d6336c !important;
+    }
+
+    #result {
+      margin-top: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      min-height: 28px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button.action {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #nextBtn {
+      background: #2563eb;
+      color: white;
+    }
+
+    #redoBtn {
+      background: #64748b;
+      color: white;
+    }
+
+    #jumpBox {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+      gap: 8px;
+    }
+
+    .qnum {
+      border: 1px solid #cfd8e3;
+      background: white;
+      border-radius: 10px;
+      padding: 9px 0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .qnum.current {
+      background: #dbeafe;
+      border-color: #60a5fa;
+    }
+
+    .qnum.done {
+      background: #dcfce7;
+      border-color: #86efac;
+    }
+
+    .qnum.wrongdone {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Bacterio Virology Quiz</h1>
+
+      <div class="note">
+        Replace or add questions inside the <code>questions</code> list.
+      </div>
+
+      <div class="topbar">
+        <div class="pill" id="progress">Question 1 / 20</div>
+        <div class="pill" id="score">Score: 0 / 20</div>
+      </div>
+
+      <div id="question"></div>
+
+      <button class="option" id="btn0" onclick="checkAnswer(0)"></button>
+      <button class="option" id="btn1" onclick="checkAnswer(1)"></button>
+      <button class="option" id="btn2" onclick="checkAnswer(2)"></button>
+      <button class="option" id="btn3" onclick="checkAnswer(3)"></button>
+
+      <div id="result"></div>
+
+      <div class="controls">
+        <button class="action" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+        <button class="action" id="redoBtn" onclick="redoQuestion()">Redo This Question</button>
+      </div>
+
+      <div id="jumpBox"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which of the following is not a genus of Enterobactericeae?",
+        options: ["Shigella spp", "Salmonella spp", "Serratia spp", "Staphylococcus spp"],
+        answer: 3
+      },
+      {
+        question: "All these species are in familly Enterobactericeae, except:",
+        options: ["Citrobacter", "Enterobacter", "Enterococcus", "Escherichia"],
+        answer: 2
+      },
+      {
+        question: "Which of the following bacteria is a genus of Enterobactericeae?",
+        options: ["Klebsiella", "Enterococcus", "Neisseria", "Mycoplasma"],
+        answer: 0
+      },
+      {
+        question: "True about Enterobactericeae is all, except:",
+        options: [
+          "Normal or pathological bacteria of digestive tract",
+          "Some group proliferate in environmental",
+          "Some species are opportunistic pathogens",
+          "Some are commensal on skin"
+        ],
+        answer: 3
+      },
+      {
+        question: "Which of the following bacteria is not a most common bacterial pathogen causing diarrhea?",
+        options: ["Shigella spp", "Salmonella spp", "Staphylococcus aureus", "Campylobacter"],
+        answer: 2
+      },
+      {
+        question: "Which of the following bacteria is rarely associated with Urinary Tract Infection?",
+        options: ["E.coli", "Enterobacter spp", "Proteus spp", "Shigella spp"],
+        answer: 3
+      },
+      {
+        question: "Which of the following Gram negative rod is not a blood borne bacterial pathogen?",
+        options: ["Shigella spp", "Escherichia coli", "Klebsiella pneumoniae", "Pseudomonas aeruginosa"],
+        answer: 0
+      },
+      {
+        question: "Stool culture is primarily recommended when the complaint is:",
+        options: [
+          "Bloody diarrhea (dysentery, enterocolitis)",
+          "Watery diarrhea",
+          "For both bloody and watery diarrhea",
+          "An indication of anaerobic infection"
+        ],
+        answer: 0
+      },
+      {
+        question: "Which of the following are reservoirs for human infection?",
+        options: ["Food and water", "Humans", "Animals", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "Enterobactericeae has respiratory type:",
+        options: ["Aerobic strict", "Aeroanaerobic facultatif", "Anaerobic strict", "Microaerophilic"],
+        answer: 1
+      },
+      {
+        question: "The vast majority of Enterobactericeae have flagellar:",
+        options: ["Peritrichous", "Monotrichous", "Amphitrichous", "Lophotrichous"],
+        answer: 0
+      },
+      {
+        question: "Which of the following bacteria is immotile (no flagellar)?",
+        options: ["Klebsiella", "Salmonella typhi", "Vibrio cholerae", "Escherichia"],
+        answer: 0
+      },
+      {
+        question: "The optimum growth temperature of Enterobactericea is:",
+        options: ["25 oC", "30 oC", "37 oC", "40 oC"],
+        answer: 2
+      },
+      {
+        question: "Enterobactericeae growth on ordinary media after:",
+        options: ["18-24 hours", "37 hours", "48 hours", "72 hours"],
+        answer: 0
+      },
+      {
+        question: "Which of the following is not a general characteristic of Enterobactericeae?",
+        options: ["Gram negative bacilli", "Oxydase positive", "Fermenter glucose", "Aero-anaerobic facultative"],
+        answer: 1
+      },
+      {
+        question: "All are true about species of Salmonella, except:",
+        options: ["Salmonella typhi", "Salmonella enteritidis", "Salmonella cholerae-suis", "Salmonella dysenteriae"],
+        answer: 3
+      },
+      {
+        question: "Not true of Salmonella is that:",
+        options: ["It is included in the family Enterobactericeae", "Oxydase negative", "Catalase positive", "Strict anaerobic"],
+        answer: 3
+      },
+      {
+        question: "Major antigens possessed by Salmonella:",
+        options: ["Antigen O", "Antigen H", "Antigen Vi", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "The characteristic of Salmonella:",
+        options: ["Motile", "Fermenting lactose", "Produce H2S", "All of the above"],
+        answer: 0
+      },
+      {
+        question: "True about the characteristic of Shigella is all, except:",
+        options: [
+          "Gram negative bacilli",
+          "Non motile",
+          "Fermenter lactose",
+          "Fermenter glucose with production of acid but not gas"
+        ],
+        answer: 2
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = Array(questions.length).fill(false);
+    let resultState = Array(questions.length).fill(null);
+
+    function renderJumpBox() {
+      const box = document.getElementById("jumpBox");
+      box.innerHTML = "";
+
+      questions.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.className = "qnum";
+
+        if (i === currentQuestion) b.classList.add("current");
+        if (resultState[i] === true) b.classList.add("done");
+        if (resultState[i] === false) b.classList.add("wrongdone");
+
+        b.textContent = i + 1;
+        b.onclick = () => {
+          currentQuestion = i;
+          loadQuestion();
+        };
+
+        box.appendChild(b);
+      });
+    }
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("question").innerText =
+        "Q" + (currentQuestion + 1) + ". " + q.question;
+
+      document.getElementById("progress").innerText =
+        "Question " + (currentQuestion + 1) + " / " + questions.length;
+
+      document.getElementById("score").innerText =
+        "Score: " + score + " / " + questions.length;
+
+      document.getElementById("result").innerText = "";
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById("btn" + i);
+        btn.innerText = String.fromCharCode(65 + i) + ". " + q.options[i];
+        btn.className = "option";
+        btn.disabled = answered[currentQuestion];
+      }
+
+      if (answered[currentQuestion]) {
+        const correct = q.answer;
+
+        for (let i = 0; i < 4; i++) {
+          document.getElementById("btn" + i).disabled = true;
+        }
+
+        if (resultState[currentQuestion] === true) {
+          document.getElementById("btn" + correct).classList.add("correct");
+          document.getElementById("result").innerText = "Already answered correctly.";
+        } else if (resultState[currentQuestion] === false) {
+          document.getElementById("btn" + correct).classList.add("correct");
+          document.getElementById("result").innerText = "Already answered. Green = correct answer.";
+        }
+      }
+
+      renderJumpBox();
+    }
+
+    function checkAnswer(selected) {
+      if (answered[currentQuestion]) return;
+
+      const correct = questions[currentQuestion].answer;
+      answered[currentQuestion] = true;
+
+      for (let i = 0; i < 4; i++) {
+        document.getElementById("btn" + i).disabled = true;
+      }
+
+      if (selected === correct) {
+        document.getElementById("btn" + selected).classList.add("correct");
+        document.getElementById("result").innerText = "Correct!";
+        resultState[currentQuestion] = true;
+        score++;
+      } else {
+        document.getElementById("btn" + selected).classList.add("wrong");
+        document.getElementById("btn" + correct).classList.add("correct");
+        document.getElementById("result").innerText = "Wrong!";
+        resultState[currentQuestion] = false;
+      }
+
+      document.getElementById("score").innerText =
+        "Score: " + score + " / " + questions.length;
+
+      renderJumpBox();
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+      } else {
+        document.querySelector(".card").innerHTML = `
+          <h1>Quiz Finished</h1>
+          <p class="note">Final score: <strong>${score} / ${questions.length}</strong></p>
+          <p>You can add more questions inside the <code>questions</code> list.</p>
+        `;
+      }
+    }
+
+    function redoQuestion() {
+      if (answered[currentQuestion] && resultState[currentQuestion] === true) {
+        score--;
+      }
+
+      answered[currentQuestion] = false;
+      resultState[currentQuestion] = null;
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
